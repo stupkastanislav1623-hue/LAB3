@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
@@ -61,32 +61,181 @@
         </div>
         
         <div class="controls">
-            <button id="clear-grid" class="btn btn-primary">🧹 Очистити сітку</button>
-            <button id="fill-random" class="btn btn-secondary">🎲 Випадкове заповнення (30%)</button>
-            <button id="fill-all" class="btn btn-success">⬛ Заповнити все</button>
-            <button id="refresh-stats" class="btn btn-info">🔄 Оновити статистику</button>
+            <button id="clear-grid" class="btn btn-primary">Очистити сітку</button>
+            <button id="fill-random" class="btn btn-secondary">Випадкове заповнення (30%)</button>
+            <button id="fill-all" class="btn btn-success">Заповнити все</button>
+            <button id="refresh-stats" class="btn btn-info">Оновити статистику</button>
         </div>
         
         <div class="cache-info">
-            <h3>📦 Інформація про кеш</h3>
+            <h3>Інформація про кеш</h3>
             <div id="cache-status" class="cache-status">
                 Очікування даних...
             </div>
         </div>
         
         <div class="pwa-info">
-            <h3>📱 PWA Статус</h3>
+            <h3>PWA Статус</h3>
             <div id="pwa-status" class="cache-status">
                 Перевірка PWA компонентів...
             </div>
             <button id="request-permission" class="btn btn-primary" style="display: none; margin-top: 10px;">
-                🔔 Дозволити сповіщення
+                Дозволити сповіщення
             </button>
+        </div>
+        
+        <div class="export-panel">
+            <h3>Фоновий експорт даних</h3>
+            
+            <div class="export-options">
+                <label>
+                    <input type="checkbox" id="include-stats" checked>
+                    Включити статистику
+                </label>
+                <label>
+                    <input type="checkbox" id="include-metadata" checked>
+                    Включити метадані
+                </label>
+            </div>
+            
+            <div class="export-controls">
+                <button id="start-export" class="btn btn-primary">Запустити експорт</button>
+                <button id="check-status" class="btn btn-secondary">Перевірити статус</button>
+                <button id="list-exports" class="btn btn-info">Список експортів</button>
+            </div>
+            
+            <div id="export-status" class="export-status">
+                Очікування дій...
+            </div>
+            
+            <div id="export-task-status" class="export-task-status"></div>
+            
+            <div id="export-download-container" class="export-download"></div>
+            
+            <div id="exports-list" class="exports-list"></div>
         </div>
         
         <div id="status" class="status">Статус: Підключення до сервера...</div>
     </div>
     
+    <style>
+        .export-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+        .export-panel h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+        .export-options {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .export-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .export-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .export-status, .export-task-status {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #dee2e6;
+        }
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 25px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            height: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        .export-download {
+            margin: 10px 0;
+        }
+        .exports-list {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+        .exports-list ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .exports-list li {
+            padding: 8px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .download-link {
+            color: #1e3c72;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .download-link:hover {
+            text-decoration: underline;
+        }
+        .cell-clicked {
+            transform: scale(1.3) !important;
+            background: linear-gradient(135deg, #ff6b6b, #ff4757) !important;
+            transition: all 0.1s ease !important;
+        }
+        .update-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e3c72;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .update-notification.show {
+            transform: translateX(0);
+        }
+        .update-notification button {
+            background: #48c78e;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+    
     <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script src="{{ url_for('static', filename='export.js') }}"></script>
 </body>
 </html>

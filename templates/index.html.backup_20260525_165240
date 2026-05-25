@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Collaborative Grid зі статистикою</title>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1e3c72">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Collaborative Grid зі статистикою</h1>
+            <div class="stats-panel">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Підключено клієнтів</div>
+                        <div id="clients-count" class="stat-value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Всього клітинок</div>
+                        <div id="total-cells" class="stat-value">6000</div>
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-label">Заповнено</div>
+                        <div id="filled-cells" class="stat-value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Порожньо</div>
+                        <div id="empty-cells" class="stat-value">6000</div>
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-card highlight">
+                        <div class="stat-label">Відсоток заповнення</div>
+                        <div id="fill-percentage" class="stat-value">0.00%</div>
+                    </div>
+                    <div class="stat-card highlight">
+                        <div class="stat-label">Ентропія Шеннона</div>
+                        <div id="entropy" class="stat-value">0.0000</div>
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-card small">
+                        <div class="stat-label">Оновлено</div>
+                        <div id="stats-timestamp" class="stat-value">--</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="grid-container">
+            <div id="grid" class="grid"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="clear-grid" class="btn btn-primary">🧹 Очистити сітку</button>
+            <button id="fill-random" class="btn btn-secondary">🎲 Випадкове заповнення (30%)</button>
+            <button id="fill-all" class="btn btn-success">⬛ Заповнити все</button>
+            <button id="refresh-stats" class="btn btn-info">🔄 Оновити статистику</button>
+        </div>
+        
+        <div class="cache-info">
+            <h3>📦 Інформація про кеш</h3>
+            <div id="cache-status" class="cache-status">
+                Очікування даних...
+            </div>
+        </div>
+        
+        <div class="pwa-info">
+            <h3>📱 PWA Статус</h3>
+            <div id="pwa-status" class="cache-status">
+                Перевірка PWA компонентів...
+            </div>
+            <button id="request-permission" class="btn btn-primary" style="display: none; margin-top: 10px;">
+                🔔 Дозволити сповіщення
+            </button>
+        </div>
+        
+        <div id="status" class="status">Статус: Підключення до сервера...</div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
